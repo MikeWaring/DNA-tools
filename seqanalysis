@@ -1,0 +1,51 @@
+# Tools for NGS datafiles.
+
+# Press Shift+F10 to execute it or replace it with your code.
+# Press Double Shift to search everywhere for classes, files, tool windows, actions, and settings.
+
+from collections import Counter
+
+#The full file
+#seqfilename = r"C:\Users\mikej\Documents\Work\DELs\Sequencing data\JHH-library_R1_001.fastq"
+# the smaller test file
+seqfilename =  r"C:\Users\mikej\Documents\Work\DELs\Sequencing data\shortfile.fastq"
+
+def fastq2tup (fastqfilename):
+    """Opens a fastq file and converts it into a tuple, input the path and file name"""
+    seqfile = open(fastqfilename)
+    seqdatastr = seqfile.read()
+    seqdatatup = tuple(map(str, seqdatastr.split('\n')))
+    return (seqdatatup)
+
+seqdatatup = fastq2tup(seqfilename)
+
+def genlistseq (seqdatatup):
+    """Extracts a list of sequences from the sequence data tuple extracted from the fastq file"""
+    sequences = []
+    for i,e in enumerate(seqdatatup):
+        if i%4 == 1:
+            sequences.append(e)
+    return (sequences)
+
+def seqdatatup2tsv (seqdatatup):
+    """Converts the fastq tuple to a text string that can be read as a .tsv"""
+    fastqtsv = "Run title\tSequence\tFlag\tQuality code"
+    for i,e in enumerate(seqdatatup):
+        if i % 4 == 0:
+            fastqtsv += "\n"
+            fastqtsv += e
+        if i % 4 != 0:
+            fastqtsv += "\t"
+            fastqtsv += e
+
+    return (fastqtsv)
+
+d = seqdatatup2tsv(seqdatatup)
+seqlist = genlistseq (seqdatatup)
+seqcount = Counter(seqlist)
+sortedseqcount = seqcount.most_common()
+
+for e,n in sortedseqcount:
+    print (e,n)
+
+print (d)
